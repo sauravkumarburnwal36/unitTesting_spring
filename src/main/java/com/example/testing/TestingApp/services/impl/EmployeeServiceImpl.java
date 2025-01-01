@@ -52,8 +52,14 @@ public class EmployeeServiceImpl implements EmployeeService {
                 log.error("Employee not found with id:{}",employeeId);
                 throw new ResourceNotFoundException("Employee not found with id:"+employeeId);
     });
-        Employee toBeUpdatedEmployee=modelMapper.map(employeeDto,Employee.class);
-        Employee savedEmployee=employeeRepository.save(toBeUpdatedEmployee);
+        if (!employee.getEmail().equals(employeeDto.getEmail())) {
+            log.error("Attempted to update email for employee with id: {}", employeeId);
+            throw new RuntimeException("The email of the employee cannot be updated");
+        }
+
+        modelMapper.map(employeeDto, employee);
+        employee.setId(employeeId);
+        Employee savedEmployee=employeeRepository.save(employee);
         log.info("Employee details updated:{]",savedEmployee);
         return modelMapper.map(savedEmployee,EmployeeDto.class);
     }
@@ -64,7 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         boolean exists= employeeRepository.existsById(employeeId);
         if(!exists){
             log.error("Employee not found with id:{}",employeeId);
-            throw new ResourceNotFoundException("Employee not found with id"+employeeId);
+            throw new ResourceNotFoundException("Employee not found with id:"+employeeId);
         }
         log.info("Deleted employee with id:{}",employeeId);
         employeeRepository.deleteById(employeeId);
