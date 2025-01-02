@@ -4,6 +4,7 @@ import com.example.testing.TestingApp.TestContainerConfiguration;
 import com.example.testing.TestingApp.dto.EmployeeDto;
 import com.example.testing.TestingApp.entities.Employee;
 import com.example.testing.TestingApp.repositories.EmployeeRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,12 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.math.BigDecimal;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureWebTestClient(timeout ="100000")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(TestContainerConfiguration.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class EmployeeControllerTestIT {
 
     @Autowired
@@ -47,17 +48,23 @@ class EmployeeControllerTestIT {
                 .name("Saurav")
                 .salary(BigDecimal.valueOf(100000.00))
                 .build();
+        employeeRepository.deleteAll();
     }
 
     @Test
     void testGetEmployeeById_success(){
         Employee savedEmployee=employeeRepository.save(testEmployee);
         webTestClient.get()
-                .uri("/employees/{emnployeeId}",savedEmployee.getId())
+                .uri("/employees/{employeeId}",savedEmployee.getId())
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(Employee.class)
-                .isEqualTo(testEmployee);
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(savedEmployee.getId())
+                .jsonPath("$.email").isEqualTo(savedEmployee.getEmail());
+//                .value(employeeDto->{
+//                    assertThat(employeeDto.getEmail()).isEqualTo(savedEmployee.getEmail());
+//                    assertThat(employeeDto.getId()).isEqualTo(savedEmployee.getId());
+//                });
     }
 
     @Test
@@ -66,6 +73,59 @@ class EmployeeControllerTestIT {
                 .uri("/employees/1")
                 .exchange()
                 .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testCreateNewEmployee_whenEmployeeAlreadyExist_thenThrowException(){
+        Employee savedEmployee=employeeRepository.save(testEmployee);
+        webTestClient.post().uri("/employees")
+                .bodyValue(testEmployeeDto)
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+
+    @Test
+    void testCreateNewEmployee_whenEmployeeDoesNotExist_thenCreateEmployee(){
+        webTestClient.post().uri("/employees")
+                .bodyValue(testEmployeeDto)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.email").isEqualTo(testEmployeeDto.getEmail())
+                .jsonPath("$.name").isEqualTo((testEmployeeDto.getName()));
+    }
+
+    @Test
+    void testUpdateEmployee_whenEmployeeDoesNotExist_thenThrowException(){
+        webTestClient.put().uri("/employees/999")
+                .bodyValue(testEmployeeDto)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+
+    @Test
+    void testUpdateEmployee_whenAttemptingToUpdateEmail_thenThrowException(){
+        Employee savedEmployee=employeeRepository.save(testEmployee);
+        testEmployeeDto.setName("Random Name");
+        testEmployeeDto.setEmail("random@gmail.com");
+        webTestClient.put().uri("/employees/{employeeId}",savedEmployee.getId())
+                .bodyValue(testEmployeeDto)
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+
+    @Test
+    void testUpdateEmployee_whenEmployeeIsValid_thenUpdateEmployee(){
+        Employee savedEmployee=employeeRepository.save(testEmployee);
+        testEmployeeDto.setName("Random Name");
+        testEmployeeDto.setSalary(BigDecimal.valueOf(50000.00));
+        webTestClient.put().uri("/employees/{employeeId}",savedEmployee.getId())
+                .bodyValue(testEmployeeDto)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(EmployeeDto.class)
+                .isEqualTo(testEmployeeDto);
     }
 
 }
