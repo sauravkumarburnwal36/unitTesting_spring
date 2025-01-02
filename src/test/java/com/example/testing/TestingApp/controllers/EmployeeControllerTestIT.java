@@ -8,46 +8,22 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@AutoConfigureWebTestClient(timeout ="100000")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(TestContainerConfiguration.class)
-class EmployeeControllerTestIT {
+class EmployeeControllerTestIT extends AbstractIntegrationTest{
 
-    @Autowired
-    private WebTestClient webTestClient;
 
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    private Employee testEmployee;
 
-    private EmployeeDto testEmployeeDto;
 
     @BeforeEach
     void setup(){
-        testEmployee=Employee.builder()
-                .id(1L)
-                .email("saurav@gmail.com")
-                .name("Saurav")
-                .salary(BigDecimal.valueOf(100000.00))
-                .build();
-        testEmployeeDto=EmployeeDto.builder()
-                .id(1L)
-                .email("saurav@gmail.com")
-                .name("Saurav")
-                .salary(BigDecimal.valueOf(100000.00))
-                .build();
         employeeRepository.deleteAll();
     }
 
@@ -126,6 +102,25 @@ class EmployeeControllerTestIT {
                 .expectStatus().isOk()
                 .expectBody(EmployeeDto.class)
                 .isEqualTo(testEmployeeDto);
+    }
+
+    @Test
+    void testDeleteEmployee_whenEmployeeDoesNotExist_thenThrowException(){
+        webTestClient.delete().uri("/employees/1")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testDeleteEmployee_whenEmployeeExist_thenDeleteEmployee(){
+        Employee savedEmployee=employeeRepository.save(testEmployee);
+        webTestClient.delete().uri("/employees/{employeeId}",savedEmployee.getId())
+                .exchange()
+                .expectStatus().isNoContent()
+                .expectBody(Void.class);
+        webTestClient.delete().uri("/employees/{employeeId}",savedEmployee.getId())
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
 }
