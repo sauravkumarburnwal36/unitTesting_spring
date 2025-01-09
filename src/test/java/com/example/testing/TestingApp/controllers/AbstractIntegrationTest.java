@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Import(TestContainerConfiguration.class)
 public class AbstractIntegrationTest {
     @Autowired
-    WebTestClient webTestClient;
+     WebTestClient webTestClient;
 
     Employee testEmployee=Employee.builder()
             .id(1L)
