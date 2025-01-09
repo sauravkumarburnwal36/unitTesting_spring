@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 //@SpringBootTest
 @Import(TestContainerConfiguration.class)
 @DataJpaTest
-@AutoConfigureTestDatabase(replace =AutoConfigureTestDatabase.Replace.ANY)
+@AutoConfigureTestDatabase(replace =AutoConfigureTestDatabase.Replace.NONE)
 class EmployeeRepositoryTest {
 
     @Autowired

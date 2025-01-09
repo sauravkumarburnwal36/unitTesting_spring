@@ -16,7 +16,8 @@ phases:
       - mvn package
   post_build:
     commands:
-      - echo Build, Testing and packaging completed.
+      - echo Build, Testing, and packaging completed.
+      - ls -R target/  # Debugging step
 artifacts:
   files:
     - target/*.jar
