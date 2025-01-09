@@ -2,6 +2,7 @@ package com.example.testing.TestingApp.repositories;
 
 import com.example.testing.TestingApp.TestContainerConfiguration;
 import com.example.testing.TestingApp.entities.Employee;
+import com.example.testing.TestingApp.services.DataService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
 import java.math.BigDecimal;
@@ -25,6 +27,8 @@ class EmployeeRepositoryTest {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+    @MockBean
+    private DataService dataService;
 
     private Employee employee;
 
