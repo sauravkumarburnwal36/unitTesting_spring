@@ -5,7 +5,6 @@ import com.example.testing.TestingApp.dto.EmployeeDto;
 import com.example.testing.TestingApp.entities.Employee;
 import com.example.testing.TestingApp.exceptions.ResourceNotFoundException;
 import com.example.testing.TestingApp.repositories.EmployeeRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

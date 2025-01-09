@@ -18,9 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 //@SpringBootTest
-//@Import(TestContainerConfiguration.class)
+@Import(TestContainerConfiguration.class)
 @DataJpaTest
-//@AutoConfigureTestDatabase(replace =AutoConfigureTestDatabase.Replace.ANY)
+@AutoConfigureTestDatabase(replace =AutoConfigureTestDatabase.Replace.ANY)
 class EmployeeRepositoryTest {
 
     @Autowired
