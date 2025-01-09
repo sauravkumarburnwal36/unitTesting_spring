@@ -12,9 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class TestingAppApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
 
 	@BeforeAll
 	static void setupOnce(){
