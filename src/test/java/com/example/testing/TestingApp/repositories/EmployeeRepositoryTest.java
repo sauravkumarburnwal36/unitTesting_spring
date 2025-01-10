@@ -27,8 +27,8 @@ class EmployeeRepositoryTest {
 
     @Autowired
     private EmployeeRepository employeeRepository;
-    @MockBean
-    private DataService dataService;
+//    @MockBean
+//    private DataService dataService;
 
     private Employee employee;
 
