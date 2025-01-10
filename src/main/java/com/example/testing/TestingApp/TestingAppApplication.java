@@ -21,8 +21,8 @@ public class TestingAppApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
-		System.out.println("My Variable:cleclea"+myVariable);
+	public void run(String... args) throws Exception { 
+		System.out.println("My Variable:"+myVariable);
 		//System.out.println("The data is:"+dataService.getData());
 	}
 }
