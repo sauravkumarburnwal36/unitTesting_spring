@@ -22,4 +22,7 @@ public class Employee {
     private String name;
 
     private BigDecimal salary;
+
+    @ManyToOne
+    private Department department;
 }

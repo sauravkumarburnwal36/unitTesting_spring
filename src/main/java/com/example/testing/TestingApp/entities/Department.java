@@ -1,9 +1,6 @@
 package com.example.testing.TestingApp.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Department {
@@ -12,4 +9,5 @@ public class Department {
     private Long id;
 
     private String title;
+
 }
